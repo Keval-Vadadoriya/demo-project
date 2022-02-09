@@ -8,6 +8,10 @@ const productTypeSchema = mongoose.Schema({
   Description: {
     type: String,
   },
+  Owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
 });
 
 const ProductType = mongoose.model("ProductType", productTypeSchema);

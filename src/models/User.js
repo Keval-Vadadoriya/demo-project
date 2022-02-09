@@ -38,6 +38,15 @@ const userSchema = mongoose.Schema({
   ],
 });
 
+userSchema.methods.toJSON = function () {
+  user = this;
+  const userObj = user.toObject();
+  delete userObj.password;
+  delete userObj.tokens;
+
+  return userObj;
+};
+
 userSchema.statics.verifyUser = async (email, password) => {
   const user = await User.findOne({ email });
   if (!user) {
@@ -57,15 +66,15 @@ userSchema.methods.generateAuthToken = async function () {
   const user = this;
   const token = jwt.sign({ _id: user._id }, "demoproject");
   user.tokens = user.tokens.concat({ token });
+  user.save();
   return token;
 };
 
-userSchema.pre("save", async function (next) {
-  user = this;
+userSchema.methods.hashPswd = async function () {
+  const user = this;
   user.password = await bcrypt.hash(user.password, 8);
-
-  next();
-});
+  return user;
+};
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

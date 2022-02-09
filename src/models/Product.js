@@ -28,6 +28,10 @@ const productSchema = mongoose.Schema(
         type: String,
       },
     ],
+    Owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
   },
   {
     timestamps: true,

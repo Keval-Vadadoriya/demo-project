@@ -6,7 +6,6 @@ const auth = async (req, res, next) => {
     const token = req.header("Authorization").replace("Bearer ", "");
     const decoded = jwt.verify(token, "demoproject");
     const user = await User.find({ _id: decoded._id, "tokens.token": token });
-
     if (!user) {
       throw new Error("Invalid user");
     }

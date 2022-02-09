@@ -83,21 +83,37 @@ router.post("/createproduct", auth, async function (req, res) {
 router.patch("/editproduct", auth, async function (req, res) {
   try {
     const product = await Product.findOne({
-      product: req.body.product,
+      product: req.query.product,
     });
-    console.log(product);
-    if (req.user._id.toString() !== product.Owner.toString()) {
-      throw new Error();
+
+    if (req.body.Owner) {
+      throw new Error("Invalid update");
     }
+
+    if (req.user._id.toString() !== product.Owner.toString()) {
+      throw new Error("unauthorized update");
+    }
+
+    if (req.body.ProductType) {
+      const productType = await ProductType.find({
+        ProductType: req.body.ProductType,
+      }).exec();
+
+      if (productType.length === 0) {
+        throw new Error("invalid ProductType");
+      }
+    }
+
     const updateProduct = await Product.updateOne(
       {
-        product: req.body.product,
+        product: req.query.product,
       },
       req.body
     );
 
     res.send(updateProduct);
   } catch (e) {
+    console.log(e);
     res.status(400).send(e);
   }
 });
@@ -106,14 +122,14 @@ router.patch("/editproduct", auth, async function (req, res) {
 router.delete("/deleteproduct", auth, async function (req, res) {
   try {
     const product = await Product.findOne({
-      product: req.body.product,
+      product: req.query.product,
     });
 
-    if (!req.user._id.toString() === product.Owner.toString()) {
-      throw new Error();
+    if (req.user._id.toString() !== product.Owner.toString()) {
+      throw new Error("unauthorized delete");
     }
     const deleteProduct = await Product.deleteOne({
-      product: req.body.product,
+      product: req.query.product,
     });
     res.send(product);
   } catch (e) {
@@ -135,7 +151,7 @@ router.get("/getallproduct", auth, async function (req, res) {
 router.get("/productbyproducttype", auth, async function (req, res) {
   try {
     const byProductType = await Product.find({
-      ProductType: req.body.ProductType,
+      ProductType: req.query.ProductType,
     }).exec();
     res.send(byProductType);
   } catch (e) {
@@ -168,10 +184,18 @@ router.get("/mostlikedproduct", auth, async function (req, res) {
 //   comment on product
 router.patch("/commentproduct", auth, async function (req, res) {
   try {
-    const product = await Product.findOne({ product: req.body.product }).exec();
-    product.Comment.push(req.body.comment);
-    product.save().then((me) => {
-      res.send(me);
+    const product = await Product.findOne({
+      product: req.query.product,
+    }).exec();
+    const commentObj = {
+      comment: req.body.comment,
+      Owner: req.user._id,
+    };
+
+    product.Comments.push(commentObj);
+
+    product.save().then((product) => {
+      res.send(product);
     });
   } catch (e) {
     res.status(400).send(e);

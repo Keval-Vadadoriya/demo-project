@@ -23,9 +23,14 @@ const productSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-    Comment: [
+    Comments: [
       {
-        type: String,
+        comment: {
+          type: String,
+        },
+        Owner: {
+          type: mongoose.Schema.Types.ObjectId,
+        },
       },
     ],
     Owner: {

@@ -1,4 +1,5 @@
 const mongoose = require("../db/mongoose");
+const User = require("./User");
 
 const productSchema = mongoose.Schema(
   {
@@ -6,35 +7,37 @@ const productSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    ProductType: {
-      type: String,
+    product_type: {
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "ProductType",
     },
-    Price: {
+    price: {
       type: Number,
       required: true,
     },
-    Like: {
+    like: {
       type: Number,
       default: 0,
     },
-    Dislike: {
+    dislike: {
       type: Number,
       default: 0,
     },
-    Comments: [
+    comments: [
       {
         comment: {
           type: String,
         },
-        Owner: {
+        owner: {
           type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
         },
       },
     ],
-    Owner: {
+    owner: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
   },

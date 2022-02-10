@@ -1,15 +1,16 @@
 const mongoose = require("../db/mongoose");
 
 const productTypeSchema = mongoose.Schema({
-  ProductType: {
+  product_type: {
     type: String,
     unique: true,
   },
-  Description: {
+  description: {
     type: String,
   },
-  Owner: {
+  owner: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
 });

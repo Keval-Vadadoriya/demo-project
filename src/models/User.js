@@ -2,6 +2,7 @@ const mongoose = require("../db/mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
 const userSchema = mongoose.Schema({
   name: {
     type: String,
@@ -38,6 +39,7 @@ const userSchema = mongoose.Schema({
   ],
 });
 
+//Hide Sensitive data
 userSchema.methods.toJSON = function () {
   user = this;
   const userObj = user.toObject();
@@ -47,6 +49,7 @@ userSchema.methods.toJSON = function () {
   return userObj;
 };
 
+//Checking Credentials
 userSchema.statics.verifyUser = async (email, password) => {
   const user = await User.findOne({ email });
   if (!user) {
@@ -64,17 +67,19 @@ userSchema.statics.verifyUser = async (email, password) => {
 //  generate JsonWebToken
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
-  const token = jwt.sign({ _id: user._id }, "demoproject");
+  const token = jwt.sign({ _id: user._id }, process.env.secretKey);
   user.tokens = user.tokens.concat({ token });
   user.save();
   return token;
 };
 
+//hashing passwords
 userSchema.methods.hashPswd = async function () {
   const user = this;
   user.password = await bcrypt.hash(user.password, 8);
   return user;
 };
+
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

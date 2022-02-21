@@ -25,8 +25,9 @@ const allProductTypes = require("../controller/allProductTypes");
 
 const router = express.Router();
 
-router.get("", (req, res) => {
-  res.send("Welcome to ecommerce Site");
+router.get("/", async (req, res) => {
+  let x = { name: "Welcome" };
+  res.send(x);
 });
 
 //   register user

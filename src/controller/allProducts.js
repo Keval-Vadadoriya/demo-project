@@ -8,6 +8,9 @@ const allProducts = async function (req, res) {
         _id: 1,
         name: 1,
       },
+      // populate: {
+      //   path: "owner",
+      // },
     });
     res.send(allProducts);
   } catch (e) {

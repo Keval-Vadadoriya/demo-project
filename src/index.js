@@ -1,8 +1,10 @@
 const express = require("express");
 const fs = require("fs");
+const cors = require("cors");
 const app = express();
+app.use(cors());
 const router = require("./routers/Router");
-const port = process.env.port || 2000;
+const port = process.env.port || 3000;
 process.env.secretKey = fs.readFileSync("./src/secret.txt");
 
 app.use(express.json());

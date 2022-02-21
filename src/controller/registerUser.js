@@ -3,6 +3,7 @@ const User = require("../models/User");
 const registerUser = async (req, res) => {
   try {
     let user = new User(req.body);
+    console.log(user);
     user = await user.hashPswd();
 
     const token = await user.generateAuthToken();
